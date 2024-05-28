@@ -1,0 +1,14 @@
+[package]
+name = "command_line_utils"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[[bin]]
+name = "rs_less"
+path = "src/bin/rs_less/main.rs"
+
+[[bin]]
+name = "rs_grep"
+path = "src/bin/rs_grep/main.rs"
