@@ -6,8 +6,8 @@ edition = "2021"
 [dependencies]
 
 [[bin]]
-name = "rs_less"
-path = "src/bin/rs_less/main.rs"
+name = "rs_echo"
+path = "src/bin/rs_echo/main.rs"
 
 [[bin]]
 name = "rs_grep"
