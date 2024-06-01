@@ -6,9 +6,12 @@ use std::env; // needed for handling environment variables (will change to prope
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(config.file_path)?;
 
+    let results = if config.ignore_case_flag.is_some() {
+        search_case_insensitive(&config.query, &contents)
+    }/* else {
     let results = if config.ignore_case {
         search_case_insensitive(&config.query, &contents)
-    } else {
+    }*/ else {
         search(&config.query, &contents)
     };
 
@@ -23,6 +26,7 @@ pub struct Config {
     pub query: String,
     pub file_path: String,
     pub ignore_case: bool,
+    pub ignore_case_flag: Option<String>,
 }
 
 impl Config {
@@ -30,12 +34,24 @@ impl Config {
         if args.len() < 3 {
             return Err("not enough arguments");
         }
+
+        // check if Config contains any flags
+        //let mut has_flags = false;
+
+
+        // get compulsory arguments
         let query = args[1].clone();
         let file_path = args[2].clone();
 
+        // check for case insensitivity flag
         let ignore_case = env::var("IGNORE_CASE").is_ok();
+        let mut ignore_case_flag = None;
 
-        Ok(Config { query, file_path, ignore_case, })
+        if (args.len() > 3 && args[3] == "--ignore-case") || (args.len() > 3 && args[3] == "-i") {
+            ignore_case_flag = Some(args[3].clone());
+        }
+
+        Ok(Config { query, file_path, ignore_case, ignore_case_flag})
     } 
 }
 
