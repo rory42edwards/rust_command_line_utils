@@ -11,10 +11,10 @@ fn main() {
         process::exit(1);
     });
 
-
-    if let Err(e) = command_line_utils::run(config) {
+    if let Err(e) = command_line_utils::run_grep(config) {
         eprintln!("Application error: {e}");
         process::exit(1);
     }
+
 
 }

@@ -1,11 +1,19 @@
 use std::env;
+use std::process;
+use command_line_utils::Config;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    let input = &args[1];
-    //let file_path = &args[2];
+    //let input = &args[1];
+    let config = Config::build(&args).unwrap_or_else(|err| {
+        eprintln!("Problem parsing arguments: {err}");
+        process::exit(1);
+    });
 
-    println!("{input}");
-    //println!("In file {}", file_path);
+    //println!("{input}");
+    if let Err(e) = command_line_utils::run_echo(config) {
+        eprintln!("Application error: {e}");
+        process::exit(1);
+    }
 }
