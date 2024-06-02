@@ -1,8 +1,37 @@
-use crate::Config;
+use std::env; // needed for handling environment variables
 use std::error::Error; // needed for error handling (surprise surprise)
 use std::fs; // needed to handle files
+             
+pub struct GrepConfig {
+    pub query: String,
+    pub file_path: String,
+    pub ignore_case: bool,
+    pub ignore_case_flag: Option<String>,
+}
 
-pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
+impl GrepConfig {
+    pub fn build(args: &[String]) -> Result<GrepConfig, &'static str> {
+        if args.len() < 3 {
+            return Err("not enough arguments");
+        }
+
+        // get compulsory arguments
+        let query = args[1].clone();
+        let file_path = args[2].clone();
+
+        // check for case insensitivity flag
+        let ignore_case = env::var("IGNORE_CASE").is_ok();
+        let mut ignore_case_flag = None;
+
+        if (args.len() > 3 && args[3] == "--ignore-case") || (args.len() > 3 && args[3] == "-i") {
+            ignore_case_flag = Some(args[3].clone());
+        }
+
+        Ok(GrepConfig { query, file_path, ignore_case, ignore_case_flag})
+    } 
+}
+
+pub fn run(config: GrepConfig) -> Result<(), Box<dyn Error>> {
     //let default_path = "/home/rory".to_string();
     //let file_path = config.file_path.clone();
     let contents = fs::read_to_string(config.file_path)?;
