@@ -12,3 +12,7 @@ path = "src/bin/rs_echo/main.rs"
 [[bin]]
 name = "rs_grep"
 path = "src/bin/rs_grep/main.rs"
+
+[[bin]]
+name = "rs_ls"
+path = "src/bin/rs_ls/main.rs"
