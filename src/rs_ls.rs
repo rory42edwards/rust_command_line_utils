@@ -26,7 +26,6 @@ pub fn run(config: LsConfig) -> Result<(), Box<dyn Error>> {
 
     let paths = match paths_result {
         Ok(read_dir) => read_dir,
-        //Err(error) => panic!("Couldn't read path: {1}: {:?}", error, config.dir_path),
         Err(error) => match error.kind() {
             ErrorKind::NotFound => {
                 println!("Location not found: {}", config.dir_path);
