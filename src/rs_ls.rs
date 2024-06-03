@@ -1,5 +1,5 @@
 use std::error::Error;
-use std::fs;
+use std::fs::{self, ReadDir};
 
 pub struct LsConfig {
     pub dir_path: String,
@@ -9,15 +9,22 @@ impl LsConfig {
     pub fn build(args: &[String]) -> Result<LsConfig, &'static str> {
         
         // get compulsory arguments
-        let dir_path = args[1].clone();
+        let mut dir_path = "./".to_string();
+        if args.len() > 1 {
+            dir_path = args[1].clone();
+        }
 
         Ok(LsConfig { dir_path })
     } 
 }
 
 pub fn run(config: LsConfig) -> Result<(), Box<dyn Error>> {
-    //let dir_path = config.dir_path;
-    let paths = fs::read_dir(config.dir_path).unwrap();
+    let paths_result = fs::read_dir(config.dir_path.clone());
+
+    let paths = match paths_result {
+        Ok(read_dir) => read_dir,
+        Err(error) => panic!("Couldn't read path: {1}: {:?}", error, config.dir_path),
+    };
     
     let file_list = make_file_list(paths);
 
@@ -28,7 +35,7 @@ pub fn run(config: LsConfig) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn make_file_list(paths: fs::ReadDir) -> Vec<String>{
+pub fn make_file_list(paths: ReadDir) -> Vec<String>{
     let mut results = Vec::new();
     //let paths = fs::read_dir(config.dir_path);
     for path in paths {
