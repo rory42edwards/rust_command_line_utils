@@ -1,8 +1,11 @@
 use std::error::Error;
 use std::fs::{self, ReadDir};
+use std::io::ErrorKind;
+use std::process;
 
 pub struct LsConfig {
-    pub dir_path: String,
+    pub dir_path: String, // could use an Option<String> here but chose not to as we'll have a
+                          // default directory path anyway
 }
 
 impl LsConfig {
@@ -23,7 +26,16 @@ pub fn run(config: LsConfig) -> Result<(), Box<dyn Error>> {
 
     let paths = match paths_result {
         Ok(read_dir) => read_dir,
-        Err(error) => panic!("Couldn't read path: {1}: {:?}", error, config.dir_path),
+        //Err(error) => panic!("Couldn't read path: {1}: {:?}", error, config.dir_path),
+        Err(error) => match error.kind() {
+            ErrorKind::NotFound => {
+                println!("Location not found: {}", config.dir_path);
+                process::exit(1);
+            },
+            other_error => {
+                panic!("Send help! {:?}", other_error);
+            }
+        },
     };
     
     let file_list = make_file_list(paths);
